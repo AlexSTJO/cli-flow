@@ -17,7 +17,7 @@ import (
 
 var createflowCmd = &cobra.Command {
 
-  Use: "createFlow",
+  Use: "createflow",
   Short: "Create a new workflow",
   Run: func(cmd *cobra.Command, args []string) {
     reader := bufio.NewReader(os.Stdin)

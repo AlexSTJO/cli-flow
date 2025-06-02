@@ -4,6 +4,7 @@ import (
   "fmt"
   "os"
   "path/filepath"
+  "encoding/json"
 
 
   "github.com/AlexSTJO/cli-flow/internal/services"
@@ -12,8 +13,8 @@ import (
 )
 
 
-var runflow = &cobra.Command{
-  Use:    "run [workflow_name]",
+var runflowCmd = &cobra.Command{
+  Use:    "runflow [workflow_name]",
   Short:  "Runs workflow by name", 
   Args:   cobra.ExactArgs(1),
   Run:    func(cmd *cobra.Command, args []string) {
@@ -22,9 +23,9 @@ var runflow = &cobra.Command{
 
     home,_ := os.UserHomeDir()
 
-    path := filepath.join(home, ".cli_flow", "workflows", workflow_name+".json")
+    path := filepath.Join(home, ".cli_flow", "workflows", workflow_name+".json")
 
-    data, err = os.ReadFile(path)
+    data, err := os.ReadFile(path)
 
     if (err != nil) {
       fmt.Printf("[Error] Error reading file: %v\n", err)
@@ -33,7 +34,7 @@ var runflow = &cobra.Command{
 
     var wf structures.Workflow
 
-    err := json.Unmarshal(data, &wf)
+    err = json.Unmarshal(data, &wf)
 
     if (err != nil) {
       fmt.Printf("[Error] Error unparsing json: %v", err)
@@ -65,5 +66,5 @@ var runflow = &cobra.Command{
     }
 
     fmt.Println("[Success] Flow Succesful")
-  }
+  },
 }

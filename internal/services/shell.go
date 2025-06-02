@@ -6,7 +6,7 @@ import (
   "os/exec"
 
 
-  "github.com/AlexSTJO/cli-flow/intenral/structures"
+  "github.com/AlexSTJO/cli-flow/internal/structures"
 )
 
 type ShellService struct {
@@ -21,19 +21,19 @@ func (s ShellService) Name() string {
 func (s ShellService) Run(step structures.Step) error {
   cmdRaw, ok := step.Config["command"]
   if !ok {
-    return fmt.Error("[Error] Missing 'command' field in step config")
+    return fmt.Errorf("[Error] Missing 'command' field in step config")
   }
 
   cmdStr, ok := cmdRaw.(string)
 
   if (!ok){
-    return fmt.Error("[Error] 'command' must be a non-empty string")
+    return fmt.Errorf("[Error] 'command' must be a non-empty string")
   }
 
   fmt.Println("[Shell] Shell execution initiated")
   fmt.Printf("[Shell] Executing the following command: %s\n", cmdStr)
 
-  cmd := exec.Command("sh", "-c", cdmStr)
+  cmd := exec.Command("sh", "-c", cmdStr)
 
   cmd.Stdout = os.Stdout
   cmd.Stderr = os.Stderr
@@ -43,7 +43,7 @@ func (s ShellService) Run(step structures.Step) error {
   err := cmd.Run()
 
   if (err != nil) {
-    return fmt.Error("[Error] Shell Error Occurred: %w", err)
+    return fmt.Errorf("[Error] Shell Error Occurred: %w", err)
   }
   return nil
 }
