@@ -16,7 +16,6 @@ import (
 
 
 var createflowCmd = &cobra.Command {
-
   Use: "createflow",
   Short: "Create a new workflow",
   Run: func(cmd *cobra.Command, args []string) {
@@ -39,7 +38,6 @@ var createflowCmd = &cobra.Command {
 
     home_directory, _ := os.UserHomeDir()
     dir := filepath.Join(home_directory, ".cli_flow", "workflows")
-    os.MkdirAll(dir, os.ModePerm)
     os.MkdirAll(dir, os.ModePerm)
 
     file_path := filepath.Join(dir, workflow_name+".json")
