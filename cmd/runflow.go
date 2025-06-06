@@ -9,6 +9,7 @@ import (
 
   "github.com/AlexSTJO/cli-flow/internal/services"
 	"github.com/AlexSTJO/cli-flow/internal/structures"
+  "github.com/AlexSTJO/cli-flow/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +21,19 @@ var runflowCmd = &cobra.Command{
   Run:    func(cmd *cobra.Command, args []string) {
     workflow_name := args[0]
 
+
+  
+    cfg, err := config.LoadAWSConfig() 
+
+    if err != nil {
+      fmt.Printf("[Error] Error loading config: %v", err)
+    }
+ 
+
+    config.SetAWSEnvVars(cfg)
+    defer config.UnsetAWSEnvVars()
+
+    
 
     home,_ := os.UserHomeDir()
 
@@ -66,5 +80,7 @@ var runflowCmd = &cobra.Command{
     }
 
     fmt.Println("[Success] Flow Succesful")
+
+    
   },
 }

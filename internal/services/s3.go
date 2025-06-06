@@ -40,7 +40,7 @@ func (s *S3Service) Run(step structures.Step) error {
     }
     cmd = exec.Command("aws", "s3", "cp", path, s3Uri)
   } else {
-    cmd = exec.Command("aws", "s3", "cp", path, s3Uri)
+    cmd = exec.Command("aws", "s3", "cp", s3Uri, path)
   }
 
   cmd.Stdout = os.Stdout
