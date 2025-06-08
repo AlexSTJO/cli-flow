@@ -16,56 +16,59 @@ func (s HttpFetchService) Name() string {
   return "http_fetch"
 }
 
-func (s HttpFetchService) Run(step structures.Step) error {
+func (s HttpFetchService) Run(step structures.Step) (Context, error) {
   urlRaw, ok := step.Config["url"]
   if !ok {
-    return fmt.Errorf(" Missing 'url' in config")
+    return nil, fmt.Errorf(" Missing 'url' in config")
   }
 
   destRaw, ok := step.Config["destination"]
   if !ok {
-    return fmt.Errorf(" Missing 'destination' in config")
+    return nil, fmt.Errorf(" Missing 'destination' in config")
   }
 
   url, ok := urlRaw.(string)
   if !ok {
-    return fmt.Errorf(" 'url' must be a string")
+    return nil, fmt.Errorf(" 'url' must be a string")
   }
 
   dest, ok := destRaw.(string)
   if !ok {
-    return fmt.Errorf(" 'dest' must be a string")
+    return nil, fmt.Errorf(" 'dest' must be a string")
   }
 
   fmt.Printf("[Download] Fetching: %s\n", url)
 
   resp, err := http.Get(url)
   if err != nil {
-      return fmt.Errorf("failed to GET URL: %w", err)
+      return nil, fmt.Errorf("failed to GET URL: %w", err)
   }
   defer resp.Body.Close()
 
   if resp.StatusCode != 200 {
-      return fmt.Errorf("non-200 response: %d", resp.StatusCode)
+      return nil, fmt.Errorf("non-200 response: %d", resp.StatusCode)
   }
 
   if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
-    return fmt.Errorf("failed to create directories: %w", err)
+    return nil, fmt.Errorf("failed to create directories: %w", err)
   }
 
   outFile, err := os.Create(dest)
   if err != nil {
-    return fmt.Errorf(" Failed to create file: %w", err)
+    return nil, fmt.Errorf(" Failed to create file: %w", err)
   }
   defer outFile.Close()
 
   _, err = io.Copy(outFile, resp.Body)
   if err != nil {
-    return fmt.Errorf(" Failed to write to file: %w", err)
+    return nil, fmt.Errorf(" Failed to write to file: %w", err)
   }
 
   fmt.Printf("[Download] Saved to: %s\n", dest)
-  return nil
+  return Context {
+    "exit_code": 0,
+    "status": "success",
+  }, nil
 
 }
 

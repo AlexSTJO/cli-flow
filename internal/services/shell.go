@@ -18,16 +18,16 @@ func (s ShellService) Name() string {
 }
 
 
-func (s ShellService) Run(step structures.Step) error {
+func (s ShellService) Run(step structures.Step) (Context , error) {
   cmdRaw, ok := step.Config["command"]
   if !ok {
-    return fmt.Errorf("[Error] Missing 'command' field in step config")
+    return nil, fmt.Errorf("[Error] Missing 'command' field in step config")
   }
 
   cmdStr, ok := cmdRaw.(string)
 
   if (!ok){
-    return fmt.Errorf("[Error] 'command' must be a non-empty string")
+    return nil, fmt.Errorf("[Error] 'command' must be a non-empty string")
   }
 
   fmt.Println("[Shell] Shell execution initiated")
@@ -43,9 +43,12 @@ func (s ShellService) Run(step structures.Step) error {
   err := cmd.Run()
 
   if (err != nil) {
-    return fmt.Errorf("[Error] Shell Error Occurred: %w", err)
+    return nil, fmt.Errorf("[Error] Shell Error Occurred: %v", err)
   }
-  return nil
+  return Context {
+    "exit_code": 0,
+    "status": "success",
+  }, nil
 }
 
 

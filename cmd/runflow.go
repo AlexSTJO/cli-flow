@@ -57,6 +57,8 @@ var runflowCmd = &cobra.Command{
 
     fmt.Printf("[Workflow] Running workflow: %s\n", wf.Name)
 
+    var ctx services.Context = map[string]any{}
+
     for _, step := range wf.Steps {
       fmt.Printf("[Workflow] Executing step: %s\n", step.Name)
       fmt.Printf("[Workflow] Utilizing service: %s\n", step.Service)
@@ -68,10 +70,26 @@ var runflowCmd = &cobra.Command{
         return
       }
 
-      err := svc.Run(step)
+      step.Config["__context"] = ctx
+
+      stepCtx, err := svc.Run(step)
 
       if (err != nil) {
         fmt.Printf("[Error] Step Failed: %v\n", err)
+        return
+      }
+      
+
+      ctx[step.Name] = map[string]any{}
+      
+      if stepCtxMap, ok := ctx[step.Name].(map[string]any); ok {
+        for k,v := range stepCtx {
+          stepCtxMap[k] = v
+        }
+
+        ctx[step.Name] = stepCtxMap
+      } else {
+        fmt.Printf("[Error] Low-key I do not know that you are doing if you hit this error, you somehow messed up a cast of a string to a map, cringe")
         return
       }
       
