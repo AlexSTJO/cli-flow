@@ -17,3 +17,5 @@ type AWSConfig struct {
   SecretKey string `json:"aws_secret_access_key"`
   Region string `json:"aws_region"`
 }
+
+
