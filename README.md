@@ -1,6 +1,6 @@
 # 🌊 cli-flow
 
-Modular CLI framework for automating cloud workflows.  
+Modular CLI framework for automating local and cloud-based workflows.  
 Written in Go. Adding services is super easy, made it as customisable as possible 
 
 ---
