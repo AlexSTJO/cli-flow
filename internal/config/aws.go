@@ -18,7 +18,7 @@ func LoadAWSConfig() (structures.AWSConfig, error){
     return cfg,err
   }
 
-  path := filepath.Join(home, ".cli_flow", "config.json")
+  path := filepath.Join(home, ".cli_flow", "config_aws.json")
 
   data, err := os.ReadFile(path)
 
@@ -34,16 +34,16 @@ func LoadAWSConfig() (structures.AWSConfig, error){
 }
 
 func SetAWSEnvVars(cfg structures.AWSConfig) {
-  fmt.Println("[Config] AWS Env Vars Being Set")
-  os.Setenv("AWS_ACCESS_KEY_ID", cfg.AccessKey)
+	fmt.Println("[Config] AWS Env Vars Being Set")
+	os.Setenv("AWS_ACCESS_KEY_ID", cfg.AccessKey)
 	os.Setenv("AWS_SECRET_ACCESS_KEY", cfg.SecretKey)
 	os.Setenv("AWS_REGION", cfg.Region)
 }
 
 
 func UnsetAWSEnvVars() {
-  fmt.Println("[Config] AWS Env Vars Being Unset")
-  os.Unsetenv("AWS_ACCESS_KEY_ID")
+	fmt.Println("[Config] AWS Env Vars Being Unset")
+	os.Unsetenv("AWS_ACCESS_KEY_ID")
 	os.Unsetenv("AWS_SECRET_ACCESS_KEY")
 	os.Unsetenv("AWS_REGION")
 }

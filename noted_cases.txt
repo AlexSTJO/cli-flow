@@ -3,3 +3,5 @@ make sure create cant override exiting flow
 same thing with new step
 
 matter of fact anything new
+
+Also big note, Config's should be optional and if file does not exit should not be a biggy until service needsit

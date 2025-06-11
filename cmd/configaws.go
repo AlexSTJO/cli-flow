@@ -16,8 +16,8 @@ import (
 
 
 
-var configureCmd = &cobra.Command{
-  Use: "configure",
+var configureawsCmd = &cobra.Command{
+  Use: "config-aws",
   Short: "Configuration command to store aws credentials",
   Run: func(cmd *cobra.Command, args []string) {
     reader := bufio.NewReader(os.Stdin)
@@ -42,7 +42,7 @@ var configureCmd = &cobra.Command{
     configPath := filepath.Join(home_directory, ".cli_flow")
     os.MkdirAll(configPath, os.ModePerm)
 
-    file, err := os.Create(filepath.Join(configPath, "config.json"))
+    file, err := os.Create(filepath.Join(configPath, "config_aws.json"))
 
     if err != nil {
       fmt.Println("Error saving config: ", err)

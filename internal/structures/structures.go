@@ -18,4 +18,9 @@ type AWSConfig struct {
   Region string `json:"aws_region"`
 }
 
+type SMTPConfig struct {
+	EmailAddress string `json:"email_address"`
+	EmailPassword string `json:"email_password"`
+}
+
 
