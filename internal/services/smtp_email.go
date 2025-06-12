@@ -64,6 +64,8 @@ func (s SmtpEmailService) Run(step structures.Step) (Context, error) {
     return nil, fmt.Errorf("failed to send email: %w", err)
   }
 
+  fmt.Println("Email has been sent!")
+
   return Context{ "exit_code": 0, "status": "success"}, nil
 }
 
