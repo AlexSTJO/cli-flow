@@ -57,7 +57,7 @@ var runflowCmd = &cobra.Command{
 
     fmt.Printf("[Workflow] Running workflow: %s\n", wf.Name)
 
-    var ctx services.Context = map[string]any{}
+    var ctx structures.Context = map[string]any{}
 
     for _, step := range wf.Steps {
       fmt.Printf("[Workflow] Executing step: %s\n", step.Name)

@@ -19,7 +19,7 @@ func (s *S3Service) ConfigSpec() []string {
   return []string{"action", "bucket", "key", "path"}
 }
 
-func (s *S3Service) Run(step structures.Step) (Context, error) {
+func (s *S3Service) Run(step structures.Step) (structures.Context, error) {
   action:=step.Config["action"].(string)
   bucket:=step.Config["bucket"].(string)
   key:=step.Config["key"].(string)
@@ -53,7 +53,7 @@ func (s *S3Service) Run(step structures.Step) (Context, error) {
     return nil, fmt.Errorf("AWS CLI Command Failed: %v", err)
   }
 
-  return Context {
+  return structures.Context {
     "exit_code": 0,
     "status": "success",
   }, nil

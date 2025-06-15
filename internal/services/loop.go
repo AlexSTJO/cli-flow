@@ -41,11 +41,11 @@ func (s LoopService) PromptForConfig() (map[string]any, error) {
     nodeId, _ := reader.ReadString('\n')
     nodeId = strings.TrimSpace(nodeId)
 
-    fmt.Printf("Key of Returned Context (i.e 'exit_code' or 'status': ")
+    fmt.Printf("Key of Returned structures.Context (i.e 'exit_code' or 'status': ")
     contextKey, _ := reader.ReadString('\n')
     contextKey = strings.TrimSpace(contextKey)
 
-    fmt.Printf("Value of Returned Context to End Loop (i.e '0' or 'success')")
+    fmt.Printf("Value of Returned structures.Context to End Loop (i.e '0' or 'success')")
     contextValue, _ := reader.ReadString('\n')
     contextValue = strings.TrimSpace(contextValue)
 
@@ -61,7 +61,7 @@ func (s LoopService) PromptForConfig() (map[string]any, error) {
   return config,nil
 }
 
-func (s *LoopService) Run(step structures.Step) (Context, error) {
+func (s *LoopService) Run(step structures.Step) (structures.Context, error) {
   config := step.Config
 
   rawSteps, ok := config["steps"].([]any)
@@ -110,7 +110,7 @@ func (s *LoopService) Run(step structures.Step) (Context, error) {
     return nil, fmt.Errorf("|| Loop || Requires 'times' or 'node_id' parameter")
   }
 
-  var finalCtx Context = map[string]any{}
+  var finalCtx structures.Context = map[string]any{}
   attempt := 0
 
   for {
@@ -125,7 +125,7 @@ func (s *LoopService) Run(step structures.Step) (Context, error) {
     attempt++
     fmt.Printf("|| Loop || Iteration #%d\n", attempt)
 
-    stepResults := map[string]Context{}
+    stepResults := map[string]structures.Context{}
 
     for _, inner := range steps {
       svc, ok := Registry[inner.Service]

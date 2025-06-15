@@ -2,11 +2,9 @@ package services
 
 import (
 	"fmt"
-	"bufio"
-	"os"
-	"strings"
 
 	"github.com/AlexSTJO/cli-flow/internal/structures"
+	"github.com/AlexSTJO/cli-flow/internal/parser"
 )
 
 
@@ -17,9 +15,20 @@ func (s *IfService) Name() string {
 }
 
 func (s *IfService) ConfigSpec() []string {
-	return []string{"Name", "Statement"}
+	return []string{"statement"}
 }
 
-func (s *IfService) Run(step structures.Step) (Context, error) {
+func (s *IfService) Run(step structures.Step) (structures.Context, error) {
+	expression := step.Config["statement"].(string)
+	context := step.Config["__context"].(structures.Context)
 
+	handledExpression := parser.ParseExpression(expression, context)
+
+	fmt.Printf("Expression is: %s\n", handledExpression) 
+	return nil, nil
+}
+
+
+func init(){
+	Registry["if"] = &IfService{}
 }

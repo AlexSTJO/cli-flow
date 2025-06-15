@@ -1,11 +1,10 @@
 package services
 
 import "github.com/AlexSTJO/cli-flow/internal/structures"
-type Context map[string]any
 
 // Interface acts like a contract remember that silly goose 
 type Service interface {
-  Run(step structures.Step) (Context, error)
+  Run(step structures.Step) (structures.Context, error)
   Name() string
   ConfigSpec() []string
 }

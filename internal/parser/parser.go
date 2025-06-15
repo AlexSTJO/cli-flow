@@ -1,13 +1,16 @@
-package main
+package parser
 
 import (
 	"regexp"
 	"fmt"
 	"strings"
+
+
+	"github.com/AlexSTJO/cli-flow/internal/structures"
 )
 
 
-func ParseExpression(expression string, context map[string]map[string]string) string {
+func ParseExpression(expression string, context structures.Context) string {
 	var varPattern = `\$\{([^}]+)\}`
 
 	re := regexp.MustCompile(varPattern)
@@ -19,16 +22,33 @@ func ParseExpression(expression string, context map[string]map[string]string) st
 			return m
 		}
 
-		node, key := parts[0], parts[1]
-		if nodeData, ok := context[node]; ok {
-			if val, ok := nodeData[key]; ok {
-				return val
-			}
+		nodeKey, fieldkey := parts[0], parts[1]
+
+
+		nodeRaw, ok := context[nodeKey]
+		if !ok {
+			return m
 		}
 
-		return m
+		fmt.Println(nodeRaw)
+
+		nodeMap, ok := nodeRaw.(map[string]any)
+		if !ok {
+			return m
+		}
+
+		valRaw, ok := nodeMap[fieldkey]
+		if !ok {
+			return m
+		}
+
+		valStr, ok := valRaw.(string)
+		if !ok {
+			return m
+		}
+		return valStr
 	})
-	fmt.Printf("[Parser] Returning parsed string: %s", updated)
+	fmt.Printf("[Parser] Returning parsed string: %s\n", updated)
 	return updated
 }
 

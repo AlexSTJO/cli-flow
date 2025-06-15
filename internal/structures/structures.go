@@ -23,4 +23,6 @@ type SMTPConfig struct {
 	EmailPassword string `json:"email_password"`
 }
 
+type Context map[string]any
+
 
