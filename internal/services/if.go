@@ -3,8 +3,9 @@ package services
 import (
 	"fmt"
 
-	"github.com/AlexSTJO/cli-flow/internal/structures"
 	"github.com/AlexSTJO/cli-flow/internal/parser"
+	"github.com/AlexSTJO/cli-flow/internal/structures"
+	"github.com/Knetic/govaluate"
 )
 
 
@@ -24,8 +25,29 @@ func (s *IfService) Run(step structures.Step) (structures.Context, error) {
 
 	handledExpression := parser.ParseExpression(expression, context)
 
-	fmt.Printf("Expression is: %s\n", handledExpression) 
-	return nil, nil
+	fmt.Printf("Evaluating Expression: %s\n", handledExpression) 
+
+	gvExpression, err := govaluate.NewEvaluableExpression(handledExpression)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := gvExpression.Evaluate(nil)
+	if err != nil {
+		return nil, err
+	}
+
+	boolResult, ok := result.(bool)
+	if !ok {
+		return nil, fmt.Errorf("Expression did not return a boolean")
+	}
+	fmt.Printf("Evaluated to: %t\n",boolResult)
+
+	return structures.Context {
+		"bool": boolResult,
+		"exit_code": "0",
+		"status": "success",
+	}, nil
 }
 
 

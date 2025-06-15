@@ -30,8 +30,6 @@ func ParseExpression(expression string, context structures.Context) string {
 			return m
 		}
 
-		fmt.Println(nodeRaw)
-
 		nodeMap, ok := nodeRaw.(map[string]any)
 		if !ok {
 			return m
@@ -46,27 +44,9 @@ func ParseExpression(expression string, context structures.Context) string {
 		if !ok {
 			return m
 		}
-		return valStr
+		return fmt.Sprintf("%q", valStr)
 	})
 	fmt.Printf("[Parser] Returning parsed string: %s\n", updated)
 	return updated
 }
-
-/* tester
-func main(){
-	context :=  map[string]map[string]string{}
-
-	context["node1"] = map[string]string{
-			"status": "success", "exit_code": "0",
-	}
-
-	
-	ParseExpression("${node1.status}", context)
-}
-
-*/
-
-
-
-
 
