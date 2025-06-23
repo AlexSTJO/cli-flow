@@ -4,7 +4,7 @@ import "github.com/AlexSTJO/cli-flow/internal/structures"
 
 // Interface acts like a contract remember that silly goose 
 type Service interface {
-  Run(step structures.Step) (structures.Context, error)
+  Run(step structures.Step, ctx *structures.Context) ([]structures.Step, error)
   Name() string
   ConfigSpec() []string
 }

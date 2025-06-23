@@ -18,7 +18,7 @@ func (s ShellService) Name() string {
 }
 
 
-func (s ShellService) Run(step structures.Step) (structures.Context , error) {
+func (s ShellService) Run(step structures.Step, ctx *structures.Context) ([]structures.Step , error) {
   cmdRaw, ok := step.Config["command"]
   if !ok {
     return nil, fmt.Errorf("[Error] Missing 'command' field in step config")
@@ -45,12 +45,14 @@ func (s ShellService) Run(step structures.Step) (structures.Context , error) {
   if (err != nil) {
     return nil, fmt.Errorf("[Error] Shell Error Occurred: %v", err)
   }
-  return structures.Context {
-    "exit_code": 0,
-    "status": "success",
-  }, nil
-}
 
+  (*ctx)[step.Name] = map[string]any{
+	"exit_code": 0,
+    "status": "success",
+  }
+
+  return nil, nil
+}
 
 func (s ShellService) ConfigSpec() []string {
   return []string{"command"}

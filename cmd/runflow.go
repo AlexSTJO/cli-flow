@@ -7,10 +7,11 @@ import (
   "encoding/json"
 
 
-  "github.com/AlexSTJO/cli-flow/internal/services"
-	"github.com/AlexSTJO/cli-flow/internal/structures"
+  //"github.com/AlexSTJO/cli-flow/internal/services"
+  "github.com/AlexSTJO/cli-flow/internal/runner"
+  "github.com/AlexSTJO/cli-flow/internal/structures"
   "github.com/AlexSTJO/cli-flow/internal/config"
-	"github.com/spf13/cobra"
+  "github.com/spf13/cobra"
 )
 
 
@@ -48,57 +49,17 @@ var runflowCmd = &cobra.Command{
 
     var wf structures.Workflow
 
-    err = json.Unmarshal(data, &wf)
+	err = json.Unmarshal(data, &wf)
 
     if (err != nil) {
       fmt.Printf("[Error] Error unparsing json: %v", err)
       return
     }
+ 	
+	err = runner.RunWorkflow(wf)
 
-    fmt.Printf("[Workflow] Running workflow: %s\n", wf.Name)
-
-    var ctx structures.Context = map[string]any{}
-
-    for _, step := range wf.Steps {
-      fmt.Printf("[Workflow] Executing step: %s\n", step.Name)
-      fmt.Printf("[Workflow] Utilizing service: %s\n", step.Service)
-
-      svc, ok := services.Registry[step.Service]
-
-      if (!ok) {
-        fmt.Printf("[Error] Unknown Service: %s\n", step.Service)
-        return
-      }
-
-      step.Config["__context"] = ctx
-
-      stepCtx, err := svc.Run(step)
-
-      if (err != nil) {
-        fmt.Printf("[Error] Step Failed: %v\n", err)
-        return
-      }
-      
-
-      ctx[step.Name] = map[string]any{}
-      
-      if stepCtxMap, ok := ctx[step.Name].(map[string]any); ok {
-        for k,v := range stepCtx {
-          stepCtxMap[k] = v
-        }
-
-        ctx[step.Name] = stepCtxMap
-      } else {
-        fmt.Printf("[Error] Low-key I do not know that you are doing if you hit this error, you somehow messed up a cast of a string to a map, cringe")
-        return
-      }
-      
-      fmt.Println("[Workflow] Step Executed Succesfully")
-
-    }
-
-    fmt.Println("[Success] Flow Succesful")
-
-    
+	if err != nil{
+		fmt.Printf("[Error] Runtime Error: %v", err)
+	}
   },
 }
