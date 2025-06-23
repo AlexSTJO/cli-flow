@@ -16,7 +16,7 @@ func (s HttpFetchService) Name() string {
   return "http_fetch"
 }
 
-func (s HttpFetchService) Run(step structures.Step) (structures.Context, error) {
+func (s HttpFetchService) Run(step structures.Step, ctx *structures.Context) ([]structures.Step, error) {
   urlRaw, ok := step.Config["url"]
   if !ok {
     return nil, fmt.Errorf(" Missing 'url' in config")
@@ -65,10 +65,13 @@ func (s HttpFetchService) Run(step structures.Step) (structures.Context, error) 
   }
 
   fmt.Printf("[Download] Saved to: %s\n", dest)
-  return structures.Context {
-    "exit_code": 0,
-    "status": "success",
-  }, nil
+
+	(*ctx)[step.Name] = map[string]any{
+		"exit_code": 0,
+		"status": "success",
+	}
+
+	return nil,nil
 
 }
 

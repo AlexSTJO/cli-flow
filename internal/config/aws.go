@@ -11,7 +11,7 @@ import (
 
 func LoadAWSConfig() (structures.AWSConfig, error){
   var cfg structures.AWSConfig
-  fmt.Println("[Config] Loading cli-flow config AWS Keys")
+  fmt.Println("[Config] Checking for AWS Credentials")
 
   home, err := os.UserHomeDir()
   if err != nil {
@@ -23,7 +23,7 @@ func LoadAWSConfig() (structures.AWSConfig, error){
   data, err := os.ReadFile(path)
 
   if err != nil {
-    return cfg, fmt.Errorf("missing config.json; please run `cli-flow configure` first: %w", err)
+    return cfg, fmt.Errorf("missing config.json; please run `cli-flow configure-aws` first: %w", err)
  }
 
   if err := json.Unmarshal(data, &cfg); err!=nil{

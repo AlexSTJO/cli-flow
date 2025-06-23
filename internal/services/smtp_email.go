@@ -20,7 +20,7 @@ func (s SmtpEmailService) ConfigSpec() []string {
 	return []string{"destination_email", "subject", "body", "port", "host"}
 }
 
-func (s SmtpEmailService) Run(step structures.Step) (structures.Context, error) {
+func (s SmtpEmailService) Run(step structures.Step, ctx *structures.Context) ([]structures.Step, error) {
   if err := config.HandleSmtpConfig(); err != nil{
     return nil, fmt.Errorf("Error getting smtp config: %w", err)
   }
@@ -65,8 +65,11 @@ func (s SmtpEmailService) Run(step structures.Step) (structures.Context, error) 
   }
 
   fmt.Println("Email has been sent!")
-
-  return structures.Context{ "exit_code": 0, "status": "success"}, nil
+	(*ctx)[step.Name] = map[string]any{
+		"exit_code": 0,
+		"status": "success",
+	}
+  return nil, nil
 }
 
 

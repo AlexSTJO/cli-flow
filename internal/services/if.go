@@ -19,11 +19,9 @@ func (s *IfService) ConfigSpec() []string {
 	return []string{"statement"}
 }
 
-func (s *IfService) Run(step structures.Step) (structures.Context, error) {
+func (s *IfService) Run(step structures.Step, ctx *structures.Context) ([]structures.Step, error) {
 	expression := step.Config["statement"].(string)
-	context := step.Config["__context"].(structures.Context)
-
-	handledExpression := parser.ParseExpression(expression, context)
+	handledExpression := parser.ParseExpression(expression, (*ctx))
 
 	fmt.Printf("Evaluating Expression: %s\n", handledExpression) 
 
@@ -42,12 +40,15 @@ func (s *IfService) Run(step structures.Step) (structures.Context, error) {
 		return nil, fmt.Errorf("Expression did not return a boolean")
 	}
 	fmt.Printf("Evaluated to: %t\n",boolResult)
-
-	return structures.Context {
+	
+	(*ctx)[step.Name] = map[string]any{
 		"bool": boolResult,
 		"exit_code": "0",
 		"status": "success",
-	}, nil
+	}
+
+
+	return nil, nil
 }
 
 

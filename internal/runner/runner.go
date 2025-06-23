@@ -24,9 +24,11 @@ func RunWorkflow(wf structures.Workflow) error{
 		}
 
 		nextSteps, err := svc.Run(c, ctx)
-		if err {
+		if err != nil {
 			return fmt.Errorf("Error while running task", err)
 		}
+
+		queue = append(nextSteps, queue...)
 	}
 
 	return nil

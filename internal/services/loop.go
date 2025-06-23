@@ -61,7 +61,7 @@ func (s LoopService) PromptForConfig() (map[string]any, error) {
   return config,nil
 }
 
-func (s *LoopService) Run(step structures.Step) (structures.Context, error) {
+func (s *LoopService) Run(step structures.Step, ctx *structures.Context) ([]structures.Step, error) {
   config := step.Config
 
   rawSteps, ok := config["steps"].([]any)
@@ -102,10 +102,10 @@ func (s *LoopService) Run(step structures.Step) (structures.Context, error) {
       return nil, fmt.Errorf("|| Loop || Invalid format for 'times' paramater")
     }
   } else if nid, hasNid := config["node_id"].(string); hasNid {
-    nodeID = nid
-    contextKey = config["context_key"].(string)
-    contextValue = config["context_value"].(string)
-    useCondition = true
+    	nodeID = nid
+    	contextKey = config["context_key"].(string)
+    	contextValue = config["context_value"].(string)
+    	useCondition = true
   } else {
     return nil, fmt.Errorf("|| Loop || Requires 'times' or 'node_id' parameter")
   }
@@ -125,7 +125,7 @@ func (s *LoopService) Run(step structures.Step) (structures.Context, error) {
     attempt++
     fmt.Printf("|| Loop || Iteration #%d\n", attempt)
 
-    stepResults := map[string]structures.Context{}
+    stepCtx := &structures.Context{}
 
     for _, inner := range steps {
       svc, ok := Registry[inner.Service]
@@ -134,24 +134,27 @@ func (s *LoopService) Run(step structures.Step) (structures.Context, error) {
       }
 
       inner.Config["__context"] = finalCtx
-      ctx, err := svc.Run(inner)
+      _, err := svc.Run(inner, stepCtx)
 
       if err != nil {
         return nil, fmt.Errorf("|| Loop || Error in step '%s' : '%w' ", inner.Name, err)
       }
 
-      stepResults[inner.Name] = ctx
-
-      for k,v := range ctx {
+      for k,v := range (*stepCtx) {
         finalCtx[k] = v
       }
     }
 
     if useCondition {
-      targetCtx, ok := stepResults[nodeID]
+      targetCtxRaw, ok := (*stepCtx)[nodeID]
       if !ok {
         return nil, fmt.Errorf("|| Loop || Could not find context for step '%s'", nodeID)
       }
+
+			targetCtx, ok := targetCtxRaw.(map[string]any)
+			if !ok {
+				return nil, fmt.Errorf("|| Loop || Type error with your target ctx")
+			}
 
       val, ok := targetCtx[contextKey]
       if ok && fmt.Sprintf("%v", val) == contextValue {
@@ -161,7 +164,8 @@ func (s *LoopService) Run(step structures.Step) (structures.Context, error) {
   }
 
   finalCtx["Attempts"] = attempt
-  return finalCtx, nil
+	(*ctx)[step.Name] = finalCtx
+  return nil,nil
 }
 
 func init(){

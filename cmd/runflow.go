@@ -20,20 +20,16 @@ var runflowCmd = &cobra.Command{
   Short:  "Runs workflow by name", 
   Args:   cobra.ExactArgs(1),
   Run:    func(cmd *cobra.Command, args []string) {
-    workflow_name := args[0]
-
-
-  
+    workflow_name := args[0] 
     cfg, err := config.LoadAWSConfig() 
 
-    if err != nil {
-      fmt.Printf("[Error] Error loading config: %v", err)
+    if err == nil {
+			config.SetAWSEnvVars(cfg)
+	    defer config.UnsetAWSEnvVars()
     }
  
 
-    config.SetAWSEnvVars(cfg)
-    defer config.UnsetAWSEnvVars()
-
+    
     
 
     home,_ := os.UserHomeDir()
@@ -52,14 +48,16 @@ var runflowCmd = &cobra.Command{
 	err = json.Unmarshal(data, &wf)
 
     if (err != nil) {
-      fmt.Printf("[Error] Error unparsing json: %v", err)
+      fmt.Printf("[Error] Error unparsing json: %v\n", err)
       return
     }
  	
 	err = runner.RunWorkflow(wf)
 
 	if err != nil{
-		fmt.Printf("[Error] Runtime Error: %v", err)
+		fmt.Printf("[Error] Runtime Error: %v\n", err)
+	} else {
+		fmt.Printf("[Success] Workflow Ran")
 	}
   },
 }
