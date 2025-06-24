@@ -28,10 +28,6 @@ var runflowCmd = &cobra.Command{
 	    defer config.UnsetAWSEnvVars()
     }
  
-
-    
-    
-
     home,_ := os.UserHomeDir()
 
     path := filepath.Join(home, ".cli_flow", "workflows", workflow_name+".json")
@@ -57,7 +53,7 @@ var runflowCmd = &cobra.Command{
 	if err != nil{
 		fmt.Printf("[Error] Runtime Error: %v\n", err)
 	} else {
-		fmt.Printf("[Success] Workflow Ran")
+		fmt.Printf("[Success] Workflow Ran\n")
 	}
   },
 }

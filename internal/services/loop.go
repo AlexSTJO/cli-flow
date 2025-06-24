@@ -126,23 +126,27 @@ func (s *LoopService) Run(step structures.Step, ctx *structures.Context) ([]stru
     fmt.Printf("|| Loop || Iteration #%d\n", attempt)
 
     stepCtx := &structures.Context{}
-
-    for _, inner := range steps {
-      svc, ok := Registry[inner.Service]
+	 	queue := append([]structures.Step{}, steps...) 
+    for len(queue) > 0 {
+			c := queue[0]
+			queue = queue[1:]
+      svc, ok := Registry[c.Service]
       if !ok {
-        return nil, fmt.Errorf("|| Loop || Unknown service '%s' in loop", inner.Service)
+        return nil, fmt.Errorf("|| Loop || Unknown service '%s' in loop", c.Service)
       }
 
-      inner.Config["__context"] = finalCtx
-      _, err := svc.Run(inner, stepCtx)
+      nextSteps, err := svc.Run(c, stepCtx)
 
       if err != nil {
-        return nil, fmt.Errorf("|| Loop || Error in step '%s' : '%w' ", inner.Name, err)
+        return nil, fmt.Errorf("|| Loop || Error in step '%s' : '%w' ", c.Name, err)
       }
+
+			queue = append(nextSteps, queue...)
 
       for k,v := range (*stepCtx) {
         finalCtx[k] = v
       }
+
     }
 
     if useCondition {
@@ -153,10 +157,13 @@ func (s *LoopService) Run(step structures.Step, ctx *structures.Context) ([]stru
 
 			targetCtx, ok := targetCtxRaw.(map[string]any)
 			if !ok {
-				return nil, fmt.Errorf("|| Loop || Type error with your target ctx")
+				return nil, fmt.Errorf("|| Loop || Type error with your target ctx: '%v'")
 			}
 
       val, ok := targetCtx[contextKey]
+			if !ok {
+				return nil, fmt.Errorf("|| Loop || ContextKey not found in targetCtx: '%v'", contextKey)
+			}
       if ok && fmt.Sprintf("%v", val) == contextValue {
         break
       }
