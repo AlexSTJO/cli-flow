@@ -15,14 +15,14 @@ import (
 
 
 var addstepCmd = &cobra.Command{
-  Use: "addstep [workflow_name] [loop_name (optional)]",
+  Use: "addstep [workflow_name] [parent_service] (optional)]",
   Short: "Adds a step to workflow by name, if loop name added step will go into loop",
   Args: cobra.RangeArgs(1,2),
   Run: func(cmd *cobra.Command, args []string) {
     workflow_name := args[0]
-    loop_name := ""
+    parent_service := ""
     if len(args) == 2 {
-        loop_name = args[1]
+        parent_service = args[1]
     }
 
     home, _ := os.UserHomeDir()
@@ -31,6 +31,7 @@ var addstepCmd = &cobra.Command{
     data, err := os.ReadFile(path)
     if err != nil {
         fmt.Printf("[Error] Error reading workflow: %v\n", err)
+
         return
     }
 
@@ -87,29 +88,43 @@ var addstepCmd = &cobra.Command{
         Config:  config,
     }
 
-    if loop_name != "" {
+    if parent_service != "" {
         found := false
         for i, outerStep := range wf.Steps {
-            if outerStep.Name == loop_name && outerStep.Service == "loop" {
-                // Marshal step into map[string]any
-                stepBytes, _ := json.Marshal(step)
-                var stepMap map[string]any
-                _ = json.Unmarshal(stepBytes, &stepMap)
+            if outerStep.Name == parent_service && (outerStep.Service == "if" || outerStep.Service == "loop") {
+								// Marshal step into map[string]any
+								stepBytes, _ := json.Marshal(step)
+								var stepMap map[string]any
+								_ = json.Unmarshal(stepBytes, &stepMap)
 
-                rawLoopSteps, ok := outerStep.Config["steps"].([]any)
-                if !ok {
-                    rawLoopSteps = []any{}
-                }
+								rawLoopSteps, ok := outerStep.Config["steps"].([]any)
+								if !ok {
+										rawLoopSteps = []any{}
+								}
 
-                rawLoopSteps = append(rawLoopSteps, stepMap)
-                outerStep.Config["steps"] = rawLoopSteps
-                wf.Steps[i] = outerStep
-                found = true
-                break
-            }
+								rawLoopSteps = append(rawLoopSteps, stepMap)
+								if outerStep.Service == "if" {
+									fmt.Printf("Run if 'True' or 'False': ")
+									con, _ := reader.ReadString('\n')
+									con = strings.TrimSpace(con)
+									if (con == "True"){
+										outerStep.Config["true_steps"] = rawLoopSteps
+									} else if (con == "False") {
+										outerStep.Config["false_steps"] = rawLoopSteps
+									} else {
+										fmt.Printf("[Error] Invalid conditional inputed: ", con)
+										return
+									}
+								} else {
+									outerStep.Config["steps"] = rawLoopSteps
+								}	
+								wf.Steps[i] = outerStep
+								found = true
+								break
         }
+			}
         if !found {
-            fmt.Printf("[Error] Loop step '%s' not found in workflow\n", loop_name)
+            fmt.Printf("[Error] Loop step '%s' not found in workflow\n", parent_service)
             return
         }
     } else {

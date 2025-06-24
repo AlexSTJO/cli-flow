@@ -45,7 +45,7 @@ func (s LoopService) PromptForConfig() (map[string]any, error) {
     contextKey, _ := reader.ReadString('\n')
     contextKey = strings.TrimSpace(contextKey)
 
-    fmt.Printf("Value of Returned structures.Context to End Loop (i.e '0' or 'success')")
+		fmt.Printf("Value of Returned structures.Context to End Loop (i.e '0' or 'success'): ")
     contextValue, _ := reader.ReadString('\n')
     contextValue = strings.TrimSpace(contextValue)
 

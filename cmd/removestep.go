@@ -44,7 +44,7 @@ var removestepCmd = &cobra.Command {
     confirm, _ := reader.ReadString('\n')
     confirm = strings.TrimSpace(confirm)
     if confirm != step_name {
-      fmt.Printf("[Error] Confirmation string did not match")
+      fmt.Println("[Error] Confirmation string did not match")
       return
     }
     
