@@ -34,12 +34,43 @@ var liststepsCmd = &cobra.Command {
     if err != nil {
       fmt.Printf("[Error] Error parsing json: %v\n", err)
       return
-    }
+   	} 
     
     fmt.Println("Workflow Steps: ")
+		
     for _, step := range wf.Steps {
-      fmt.Printf("  - %s\n", step.Name)
-    }
+			fmt.Printf("  - %s\n", step.Name)
+			if (step.Service) == "loop" {
+				inners, ok := step.Config["steps"].([]structures.Step)
+				if !ok {
+					fmt.Printf("[Error] Error converting type\n")
+      		return
+				}
+
+				for _, inner := range inners {
+					fmt.Printf("  -- %s\n", inner.Name)
+				}
+			} else if (step.Service) == "if" {
+				fmt.Println("    <True> ")
+				inners, ok := step.Config["true_steps"].([]structures.Step)
+				if !ok {
+					fmt.Println("    **Empty**")
+				}
+				for _, inner := range inners {
+					fmt.Printf(" -- %s\n", inner.Name)
+				}
+				
+				fmt.Println("    <False> ")
+				falseInners, ok := step.Config["false_steps"].([]structures.Step)
+				if !ok {
+      		fmt.Println("    **Empty**")
+				}
+
+				for _, inner := range falseInners {
+					fmt.Printf(" -- %s\n", inner.Name)
+				}
+			}
+		}
 
   },
 }
