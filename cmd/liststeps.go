@@ -8,7 +8,7 @@ import (
 
   "github.com/spf13/cobra"
   "github.com/AlexSTJO/cli-flow/internal/structures"
-	//"github.com/AlexSTJO/cli-flow/internal/parser"
+	"github.com/AlexSTJO/cli-flow/internal/formatter"
 )
 
 
@@ -39,14 +39,11 @@ var liststepsCmd = &cobra.Command {
     
 
     fmt.Println("Workflow Steps: ")
-		steps := wf.Steps	
-		queue := append([]structures.Step{}, steps...)
-
-		for len(queue) > 0 {
-			c := queue[0]
-			queue = queue[1:]
-			fmt.Println(c.Name)
+		
+		for i, step := range wf.Steps {
+				formatter.PrintStepTree("", step, i == (len(wf.Steps) - 1))	
 		}
+		
 		
     
 
