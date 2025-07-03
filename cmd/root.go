@@ -37,7 +37,7 @@ func init() {
   rootCmd.AddCommand(addstepCmd)
   rootCmd.AddCommand(runflowCmd)
   rootCmd.AddCommand(listflowCmd) 
-  rootCmd.AddCommand(liststepsCmd)
+  rootCmd.AddCommand(mapCmd)
   rootCmd.AddCommand(removeflowCmd)
   rootCmd.AddCommand(removestepCmd)
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
