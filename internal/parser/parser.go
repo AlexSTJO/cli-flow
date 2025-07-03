@@ -50,3 +50,28 @@ func ParseExpression(expression string, context structures.Context) string {
 	return updated
 }
 
+
+func ParseSteps (raw any) ([]structures.Step, error) {
+	items, ok := raw.([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("Invalid input in Step Parser")
+	}
+
+	var steps []structures.Step
+
+	for _, item := range items {
+		stepMap, ok := item.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("Invalid input in Step Parser")
+		}
+
+		step := structures.Step{
+			Name: stepMap["name"].(string),
+			Service: stepMap["service"].(string),
+			Config: stepMap["config"].(map[string]interface{}),
+		}
+		steps = append(steps,step)
+	}
+
+	return steps, nil
+}

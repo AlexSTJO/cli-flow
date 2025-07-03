@@ -8,6 +8,7 @@ import (
 
   "github.com/spf13/cobra"
   "github.com/AlexSTJO/cli-flow/internal/structures"
+	//"github.com/AlexSTJO/cli-flow/internal/parser"
 )
 
 
@@ -36,41 +37,18 @@ var liststepsCmd = &cobra.Command {
       return
    	} 
     
+
     fmt.Println("Workflow Steps: ")
-		
-    for _, step := range wf.Steps {
-			fmt.Printf("  - %s\n", step.Name)
-			if (step.Service) == "loop" {
-				inners, ok := step.Config["steps"].([]structures.Step)
-				if !ok {
-					fmt.Printf("[Error] Error converting type\n")
-      		return
-				}
+		steps := wf.Steps	
+		queue := append([]structures.Step{}, steps...)
 
-				for _, inner := range inners {
-					fmt.Printf("  -- %s\n", inner.Name)
-				}
-			} else if (step.Service) == "if" {
-				fmt.Println("    <True> ")
-				inners, ok := step.Config["true_steps"].([]structures.Step)
-				if !ok {
-					fmt.Println("    **Empty**")
-				}
-				for _, inner := range inners {
-					fmt.Printf(" -- %s\n", inner.Name)
-				}
-				
-				fmt.Println("    <False> ")
-				falseInners, ok := step.Config["false_steps"].([]structures.Step)
-				if !ok {
-      		fmt.Println("    **Empty**")
-				}
-
-				for _, inner := range falseInners {
-					fmt.Printf(" -- %s\n", inner.Name)
-				}
-			}
+		for len(queue) > 0 {
+			c := queue[0]
+			queue = queue[1:]
+			fmt.Println(c.Name)
 		}
+		
+    
 
   },
 }
