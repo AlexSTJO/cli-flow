@@ -6,8 +6,17 @@ import (
   "os"
   "path/filepath"
   "strings"
-  
+ 	"github.com/fatih/color"
   "github.com/spf13/cobra"
+)
+
+var (
+	cyan   = color.New(color.FgCyan).SprintFunc()
+	green  = color.New(color.FgGreen).SprintFunc()
+	yellow = color.New(color.FgYellow).SprintFunc()
+	red    = color.New(color.FgRed).SprintFunc()
+	bold   = color.New(color.Bold).SprintFunc()
+	faint  = color.New(color.Faint).SprintFunc()
 )
 
 
@@ -18,14 +27,14 @@ var listflowCmd = &cobra.Command {
     home_directory, err := os.UserHomeDir()
 
     if err != nil {
-      fmt.Println("[Error] Error reading workflow directory: ", err)
+      fmt.Println(red("[Error] Error reading workflow directory: "), err)
       return
     }
     dir := filepath.Join(home_directory, ".cli_flow", "workflows")
 
     files, err := os.ReadDir(dir)
     if err != nil {
-      fmt.Println("[Error] Error reading workflow directory: ", err)
+      fmt.Println(red("[Error] Error reading workflow directory: "), err)
       return
     }
 

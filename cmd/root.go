@@ -35,7 +35,7 @@ func init() {
   rootCmd.AddCommand(configuresmtpCmd) 
   rootCmd.AddCommand(createflowCmd)
   rootCmd.AddCommand(addstepCmd)
-  rootCmd.AddCommand(runflowCmd)
+  rootCmd.AddCommand(runCmd)
   rootCmd.AddCommand(listflowCmd) 
   rootCmd.AddCommand(mapCmd)
   rootCmd.AddCommand(removeflowCmd)
