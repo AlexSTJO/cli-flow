@@ -33,8 +33,7 @@ func Execute() {
 func init() {
   rootCmd.AddCommand(configureawsCmd)
   rootCmd.AddCommand(configuresmtpCmd) 
-  rootCmd.AddCommand(createflowCmd)
-  rootCmd.AddCommand(addstepCmd)
+  rootCmd.AddCommand(addCmd)
   rootCmd.AddCommand(runCmd)
   rootCmd.AddCommand(listflowCmd) 
   rootCmd.AddCommand(mapCmd)
