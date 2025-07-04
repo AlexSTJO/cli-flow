@@ -10,7 +10,9 @@ import (
 
   "github.com/AlexSTJO/cli-flow/internal/services"
 	"github.com/AlexSTJO/cli-flow/internal/structures"
+	"github.com/AlexSTJO/cli-flow/internal/utils"
 	"github.com/spf13/cobra"
+
 )
 
 
@@ -85,6 +87,7 @@ var addCmd = &cobra.Command{
 			name, _ := reader.ReadString('\n')
 			name = strings.TrimSpace(name)
 
+
 			fmt.Print("Please enter service: ")
 			service, _ := reader.ReadString('\n')
 			service = strings.TrimSpace(service)
@@ -126,6 +129,16 @@ var addCmd = &cobra.Command{
 					Service: service,
 					Config:  config,
 			}
+			
+			exists, err := utils.Search(wf.Steps, name)
+			if err != nil {
+				fmt.Printf("[Error] Could not search for step: %v\n", err)
+        return
+      }
+			if exists{
+          fmt.Printf("[Error] Step '%s' already exists\n", name)
+          return
+      }
 
 			if parent_service != "" {
 					found := false
