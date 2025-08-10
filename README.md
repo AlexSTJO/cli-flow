@@ -85,9 +85,8 @@ Each service registers itself to the global `Registry` via `init()`.
 
 ## 🚧 Roadmap
 
-- [ ] Add inline scripting (`code.runner`)
-- [ ] Auto-doc each service with `ConfigSpec()`
 - [ ] Add logger helper to have uniform formatting
+- [ ] Restructure runner from queue to DAG
 
 ---
 
