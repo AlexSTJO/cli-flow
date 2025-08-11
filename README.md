@@ -1,7 +1,11 @@
-# 🌊 cli-flow
+# 🌊 cli-flow ( ARCHIVED )
+
+
 
 Modular CLI framework for automating local and cloud-based workflows.  
 Written in Go. Adding services is super easy, made it as customisable as possible 
+
+Had this working in a queue based architecture ... I figured out that this is not the way to architect a workflow and using a DAG is much more dynamic
 
 ---
 
